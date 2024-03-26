@@ -58,11 +58,33 @@ gpg --decrypt --output backup.tar backup.gpg
 tar -xvf backup.tar
 rm backup.tar
 
+# Redo this section to get rid of the GPG check
+
 for FILE in *
 do
 
 diff -s $FILE $new_folder$FILE
-echo $FILE	
+
+if [ $FILE = "backup.gpg" ]; then
+        echo "Pass this"
+elif [ $? -eq 1 ]; then
+        echo "Pass statement should go here"
+else
+        echo "Unexpected result in comparison, program aborting"
+fi
+
 
 done
 
+cp backup.gpg "$1"
+
+# Delete folders in safe way
+
+rm *
+cd ..
+cd "$new_folder" 
+rm *
+cd ..
+rmdir $new_folder
+rmdir $testing_folder
+rm $3
