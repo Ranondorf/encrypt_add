@@ -5,10 +5,10 @@
 
 # Folder where log file and temporary files go.
 
-# Normally called by encrypt_add.sh <Path to GPG file> <Base Folder> <File to Add>
+# Normally called by encrypt_add.sh <Path to GPG file> <Base Folder, temp folders are created here> <Path for file to Add>
 
-base_folder=""
 
+abort_flag="False"
 log_file="encrypt_add_log.txt"
 
 echo "---------------------------------------" >> $log_file
@@ -39,6 +39,11 @@ cp "$1" "$new_folder"
 cd "$new_folder"
 echo RELOADAGENT | gpg-connect-agent
 gpg --decrypt --output backup.tar backup.gpg
+if [ $? -eq 0 ]; then
+    echo "Password to decrypt file correct"
+else
+    echo "Incorrect password to decrypt file"
+fi
 tar -xvf backup.tar
 
 # Create new encypted file
@@ -47,6 +52,13 @@ cp "$3" .
 rm backup.gpg
 tar -cf backup.tar *
 gpg --symmetric --cipher-algo aes256 -o backup.gpg backup.tar
+if [ $? -eq 0 ]; then
+    echo "New encrypted file created"
+else
+    echo "Issue creating new encrypted file"
+fi
+
+
 rm backup.tar
 
 # Decrypt GPG file
@@ -55,6 +67,12 @@ mv backup.gpg "$testing_folder"
 cd "$testing_folder"
 echo RELOADAGENT | gpg-connect-agent
 gpg --decrypt --output backup.tar backup.gpg
+if [ $? -eq 0 ]; then
+    echo "New encrypted file decrypted for testing"
+else
+    echo "Unable to decrypt newly created file"
+fi
+
 tar -xvf backup.tar
 rm backup.tar
 
@@ -63,23 +81,32 @@ rm backup.tar
 for FILE in *
 do
 
-diff -s $FILE $new_folder$FILE
+if [ $FILE != "backup.gpg" ]; then
+    diff -s $FILE $new_folder$FILE
+else
+    continue
+fi
 
-if [ $FILE = "backup.gpg" ]; then
-        echo "Pass this"
-elif [ $? -eq 1 ]; then
-        echo "Pass statement should go here"
+if [ $? -eq 0 ]; then
+        :
 else
         echo "Unexpected result in comparison, program aborting"
+	abort_flag="True"
+	break
 fi
 
 
 done
 
-cp backup.gpg "$1"
+if [ $abort_flag == "False" ]; then
+    cp backup.gpg "$1"
+    echo "Copying new file back to source location"
+    echo "Operation successful for file add"
+fi
 
 # Delete folders in safe way
 
+echo "Deleting temporary files and folders"
 rm *
 cd ..
 cd "$new_folder" 
