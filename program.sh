@@ -29,16 +29,18 @@ fi
 
 new_folder="$2/new_gpg/"
 testing_folder="$2/testing_folder/"
-
+echo $rule
 mkdir $new_folder
 mkdir $testing_folder
 
 # Copy original GPG file to working folder
 
 cp "$1" "$new_folder"
+old_gpg_file=$(basename "$1")
 cd "$new_folder"
+
 echo RELOADAGENT | gpg-connect-agent
-gpg --decrypt --output backup.tar backup.gpg
+gpg --decrypt --output backup.tar $old_gpg_file
 if [ $? -eq 0 ]; then
     echo "Password to decrypt file correct"
 else
@@ -49,9 +51,11 @@ tar -xvf backup.tar
 # Create new encypted file
 
 cp "$3" .
-rm backup.gpg
+rm $old_gpg_file
 tar -cf backup.tar *
-gpg --symmetric --cipher-algo aes256 -o backup.gpg backup.tar
+new_gpg_file=backup_$(date +"%Y%m%d_%H%M%S").gpg
+echo "This is the new file $new_gpg_file"
+gpg --symmetric --cipher-algo aes256 -o $new_gpg_file backup.tar
 if [ $? -eq 0 ]; then
     echo "New encrypted file created"
 else
@@ -63,10 +67,10 @@ rm backup.tar
 
 # Decrypt GPG file
 
-mv backup.gpg "$testing_folder"
+mv $new_gpg_file "$testing_folder"
 cd "$testing_folder"
 echo RELOADAGENT | gpg-connect-agent
-gpg --decrypt --output backup.tar backup.gpg
+gpg --decrypt --output backup.tar $new_gpg_file
 if [ $? -eq 0 ]; then
     echo "New encrypted file decrypted for testing"
 else
@@ -81,7 +85,7 @@ rm backup.tar
 for FILE in *
 do
 
-if [ $FILE != "backup.gpg" ]; then
+if [ $FILE != $new_gpg_file ]; then
     diff -s $FILE $new_folder$FILE
 else
     continue
@@ -99,7 +103,7 @@ fi
 done
 
 if [ $abort_flag == "False" ]; then
-    cp backup.gpg "$1"
+    cp $new_gpg_file "$(dirname "$1")/"
     echo "Copying new file back to source location"
     echo "Operation successful for file add"
 fi
