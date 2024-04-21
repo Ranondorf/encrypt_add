@@ -8,7 +8,7 @@ Run script with 4 arguments, use absolute paths.
 
 Format:
 
-encrypt_add <Path to original archive> <Path to f:older to create temporary files in> <Path to file to be added> <Prefix to use in output file name>
+encrypt_add "Path to original archive" "Path to f:older to create temporary files in" "Path to file to be added" "Prefix to use in output file name"
 
 ## Credits
 Ruwan Samaranayake
