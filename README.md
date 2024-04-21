@@ -1,10 +1,15 @@
-# scale_down
-Script to shrink MP4 files. Use case is shrinking the videos taken by an Android phone. This makes them easier to distribute by electronic means.
+# encrypt_add
+Program to add a new file to a GPG encrypted tar file
 ## Installation
 ### Prequisites
-- Requires FFMPEG to perform shrinking function.
-### Installing Program
-Run bash script with two arguments (source dir and destination dir: include trailing slash). Source dir should have the large MP4 files.
+- Requires GPG to be installed for encryption and decryption
+### Installing/Running Program
+Run script with 4 arguments, use absolute paths.
+
+Format:
+
+encrypt_add <Path to original archive> <Path to f:older to create temporary files in> <Path to file to be added> <Prefix to use in output file name>
+
 ## Credits
 Ruwan Samaranayake
 ## License
