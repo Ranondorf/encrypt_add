@@ -46,7 +46,7 @@ echo
 # Copy original GPG file to working folder
 
 
-echo "Copying exising file to work folder"
+echo "Copying existing file to work folder"
 
 
 cp "$1" "$work_folder"
@@ -55,17 +55,17 @@ cd "$work_folder"
 
 echo RELOADAGENT | gpg-connect-agent
 gpg --decrypt --output backup.tar $old_gpg_file
-echo
 if [ $? -eq 0 ]; then
+    echo
     echo "Password to decrypt file correct"
 else
+    echo
     echo "Incorrect password to decrypt file"
 fi
 echo
 echo "Follwing files pulled from archive:"
 echo
 tar -xvf backup.tar
-
 # Create new encypted file
 
 cp "$3" .
@@ -88,7 +88,7 @@ rm backup.tar
 
 echo
 echo
-echo "Begining verfications phase"
+echo "Beginning verfications phase"
 
 # Decrypt GPG file
 mv "$new_gpg_file" "$testing_folder"
@@ -110,7 +110,7 @@ fi
 
 echo
 echo
-echo "Extracted the follwoing files:"
+echo "Extracted the following files:"
 echo
 tar -xvf backup.tar
 rm backup.tar
