@@ -3,9 +3,17 @@
 # Program to add an existing file to GPG encrypted file
 # File is added, encrypted, tested and then copied to the final resting location
 
-# Folder where log file and temporary files go.
+# Normally called by encrypt_add.sh <Path to GPG file> <Base Folder> <Path for file to add> <Name for output file>
 
-# Normally called by encrypt_add.sh <Path to GPG file> <Base Folder, temp folders are created here> <Path for file to Add> <New filename for output file>
+# <Path to GPG file> is the path to the existing GPG file you want to add a new file to
+# <Base folder> this is the location where the temporary folders and files are created for this script..this will get cleaned up post run.
+# <Path for file to add> The path to the new file that needs to be added
+# <Name for output file> The name of the output GPG file without extension.
+
+# Example:
+# ./program.sh /mybackups/current/backup5.gpg /home/billybob/ /home/billybob/topsecret.txt backup6
+# Result will be a new file called /mybackups/current/backup6.gpg
+# Clean up tasks would be around what you did with backup5.gpg and topsecret.txt.
 
 # Note always use absolute paths for the parameters!
 
